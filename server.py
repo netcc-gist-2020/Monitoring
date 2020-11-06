@@ -25,9 +25,9 @@ async def accept(websocket, path):
 				data = {
 					'type': "exp",
 					'data': {
-						'expression': "sleepy",
+						'expression': "happy",
 						'eye_dir': "center",
-						'key': "w97LjX"
+						'key': "x91LjX"
 					}
 				}
 				await websocket.send(json.dumps(data))
