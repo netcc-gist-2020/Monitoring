@@ -1,7 +1,7 @@
 import asyncio
 import websockets
-import sqlite3 
 import json
+from db import DB
 
 '''
 Request Form when Enter
@@ -15,70 +15,50 @@ JSON {
 }
 '''
 
-class DB:
-	def __init__(self):
-		self.conn = sqlite3.connect('example.db')
-		self.c = self.conn.cursor()
-
-
-	def create_table(self):
-		self.c.execute("create table record (key char(6), expression text, eye_dir text, time datetime default current_timestamp)")
-		self.conn.commit()
-
-
-	def insert(self, record):
-		self.c.execute("insert into record (key, expression, eye_dir) values(?,?, ?)", record)
-
-
-	def query(self):
-		return self.c.execute("select * from record")
-
-	def delete_all(self):
-		self.c.execute("delete from record")
-
-	def commit(self):
-		self.conn.commit()
-
-
-"""
-async def my_connect(db):
-    async with websockets.connect("ws://localhost:3001") as websocket:
-    	while True:
-        	received_data = await websocket.recv()
-"""
 
 async def my_connect(db):
-    async with websockets.connect("ws://localhost:3000") as websocket:
-        #await websocket.send("Hi server. I'm client")
+	async with websockets.connect("ws://localhost:3000") as websocket:
+		#await websocket.send("Hi server. I'm client")
 
-        while True:
-            data_rcv = await websocket.recv()
-            json_data = json.loads(data_rcv)
-            data = json_data["data"]
+		while True:
+			data_rcv = await websocket.recv()
+			json_data = json.loads(data_rcv)
+			data = json_data["data"]
 
-            key = data["key"]
-            expression = data["expression"]
-            eye_dir = data["eye_dir"]
+			key = data["key"]
+			expression = data["expression"]
+			eye_dir = data["eye_dir"]
 
-            print(type(key))
+			db.insert((key, expression, eye_dir))
 
-            db.insert((key, expression, eye_dir))
-            #db.commit()
+			
 
-            q = db.query()
-            for row in q:
-            	print(row)
 
-if __name__ == "__main__":
+async def main():
 	db = DB()
-
 	try:
 		db.create_table()
-		db.commit()
 	except:
 		pass
 
 
-	asyncio.get_event_loop().run_until_complete(my_connect(db))
+	asyncio.ensure_future(my_connect(db))
+	while True:
+		await asyncio.sleep(1)
+
+		q = db.query()
+		for row in q:
+			print(row)
+
+		db.commit()
+
+		print("Data saved!")
+
+
+	app.run(host='127.0.0.1', port='3001')
+
+
+if __name__ == "__main__":
+	asyncio.get_event_loop().run_until_complete(main())
 
 

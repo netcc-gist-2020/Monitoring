@@ -30,8 +30,8 @@ async def accept(websocket, path):
 						'key': "w97LjX"
 					}
 				}
-			await websocket.send(json.dumps(data))
-			time.sleep(0.1)
+				await websocket.send(json.dumps(data))
+				time.sleep(0.1)
 
 		except websockets.exceptions.ConnectionClosedError:
 			return
