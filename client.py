@@ -59,7 +59,8 @@ async def my_connect(db):
             data_rcv = data_rcv["data"]
 
             data_rcv["key"]
-            data_rcv["exp"]
+            data_rcv["expression"]
+            data_rcv["eye_dir"]
             print(data_rcv)
 
 
