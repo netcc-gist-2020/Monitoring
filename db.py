@@ -23,3 +23,9 @@ class DB:
 
 	def commit(self):
 		self.conn.commit()
+
+	def close(self):
+		self.conn.close()
+		
+	def __del__(self):
+		self.close()
