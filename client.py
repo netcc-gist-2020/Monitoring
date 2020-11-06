@@ -15,7 +15,6 @@ JSON {
 }
 '''
 
-
 async def my_connect(db):
 	async with websockets.connect("ws://localhost:3000") as websocket:
 		#await websocket.send("Hi server. I'm client")
@@ -30,9 +29,6 @@ async def my_connect(db):
 			eye_dir = data["eye_dir"]
 
 			db.insert((key, expression, eye_dir))
-
-			
-
 
 async def main():
 	db = DB()
@@ -53,10 +49,6 @@ async def main():
 		db.commit()
 
 		print("Data saved!")
-
-
-	app.run(host='127.0.0.1', port='3001')
-
 
 if __name__ == "__main__":
 	asyncio.get_event_loop().run_until_complete(main())
