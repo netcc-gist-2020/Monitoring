@@ -53,17 +53,13 @@ async def my_connect(db):
 
         while True:
             data_rcv = await websocket.recv()
-            
-            data_rcv = json.loads(data_rcv)
+            json_data = json.loads(data_rcv)
+            data = json_data["data"]
 
-            data_rcv = data_rcv["data"]
-
-            data_rcv["key"]
-            data_rcv["expression"]
-            data_rcv["eye_dir"]
-            print(data_rcv)
-
-
+            key = data["key"]
+            expression = data["expression"]
+            eye_dir = data["eye_dir"]
+            print(data)
 
 if __name__ == "__main__":
 	db = DB()
