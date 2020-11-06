@@ -22,12 +22,12 @@ class DB:
 
 
 	def create_table(self):
-		self.c.execute("create table record (key char(6), data text, time datetime default current_timestamp)")
+		self.c.execute("create table record (key char(6), expression text, eye_dir text, time datetime default current_timestamp)")
 		self.conn.commit()
 
 
 	def insert(self, record):
-		self.c.execute("insert into record values(?,?,NULL)", record)
+		self.c.execute("insert into record (key, expression, eye_dir) values(?,?, ?)", record)
 
 
 	def query(self):
@@ -59,10 +59,26 @@ async def my_connect(db):
             key = data["key"]
             expression = data["expression"]
             eye_dir = data["eye_dir"]
-            print(data)
+
+            print(type(key))
+
+            db.insert((key, expression, eye_dir))
+            #db.commit()
+
+            q = db.query()
+            for row in q:
+            	print(row)
 
 if __name__ == "__main__":
 	db = DB()
+
+	try:
+		db.create_table()
+		db.commit()
+	except:
+		pass
+
+
 	asyncio.get_event_loop().run_until_complete(my_connect(db))
 
 
