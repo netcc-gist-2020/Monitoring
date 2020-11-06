@@ -1,10 +1,22 @@
 import asyncio
 import websockets
 
+'''
+Request Form when Enter
+JSON {
+ 'type': "open"
+ 'data' : JSON {
+   'key': null
+   'keys': null
+   'expression': null
+ }
+}
+'''
+
 async def my_connect():
     async with websockets.connect("ws://localhost:3000") as websocket:
-        for _ in range(1,100,1):
-            await websocket.send("Hi server. I'm client")
+        await websocket.send("Hi server. I'm client")
+        while True:
             data_rcv = await websocket.recv()
             print(data_rcv)
 

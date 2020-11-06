@@ -1,11 +1,36 @@
 import asyncio
 import websockets
+import json
+import time
+
+'''
+# exp
+JSON {
+ 'type': "exp"
+ 'data' : JSON {
+   'key': "exp를 보낸놈의 ID"
+   'keys': null
+   'expression': "expression"
+ }
+}
+
+# 
+'''
 
 async def accept(websocket, path):
+    data_rcv = await websocket.recv()
     while True:
-        data_rcv = await websocket.recv()
-        print("received data = " + data_rcv)
-        await websocket.send("websocket_svr send data =" + data_rcv)
+        for _ in range(10):
+            data = {
+                'type': "exp",
+                'data': {
+                    'key': "AX1FZX",
+                    'keys': None,
+                    'expression': "sleepy"
+                }
+            }
+        await websocket.send(json.dumps(data))
+        time.sleep(1)
     
 websoc_svr = websockets.serve(accept, "localhost", 3000)
 
