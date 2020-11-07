@@ -36,13 +36,13 @@ async def connect_socket(db):
 
 
 async def save_db(db, print_log=True):
-	
+
 	while True:
 
 		if print_log:
 			for row in db.query():
 				print(row)
-				print("Saved!")
+			print("Saved!")
 
 		db.commit()
 		await asyncio.sleep(1)
@@ -60,7 +60,7 @@ async def accept_user(websocket, path):
 
 	# connect to socket
 	socket_connection = asyncio.ensure_future(connect_socket(db))
-	savedb = asyncio.enusre_future(save_db(db))
+	savedb = asyncio.ensure_future(save_db(db))
 
 	while True:
 		try:
@@ -70,12 +70,14 @@ async def accept_user(websocket, path):
 				break
 
 		except websockets.exceptions.ConnectionClosedError:
-			print("canceled!")
+			print("cancelled!")
 			break
 
 
+
 	socket_connection.cancel()
-	
+	savedb.cancel()
+	db.commit()
 
 
 async def main():
