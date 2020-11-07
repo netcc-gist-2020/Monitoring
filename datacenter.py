@@ -52,7 +52,7 @@ async def accept_user(websocket, path):
 	while True:
 		try:
 			data_rcv = await websocket.recv()
-			if data_rcv.contains("cancel"):
+			if "cancel" in data_rcv:
 				print("received cancel request")
 				break
 
