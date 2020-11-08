@@ -14,6 +14,9 @@ JSON {
  }
 }
 '''
+# socket_url = "0.0.0.0"
+socket_url = "localhost"
+
 
 async def connect_socket(db):
 	async with websockets.connect("ws://localhost:3000") as websocket:
@@ -77,11 +80,11 @@ async def accept_user(websocket, path):
 
 	socket_connection.cancel()
 	savedb.cancel()
-	db.commit()
+	db.delete_all()
 
 
 async def main():
-	ws = asyncio.ensure_future(websockets.serve(accept_user, "localhost", 3001))
+	ws = asyncio.ensure_future(websockets.serve(accept_user, socket_url, 3001))
 
 	while True:
 		await asyncio.sleep(1)
