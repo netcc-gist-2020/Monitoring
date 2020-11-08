@@ -14,14 +14,11 @@ JSON {
  }
 }
 '''
-# socket_url = "0.0.0.0"
-socket_url = "localhost"
-
+socket_url = "0.0.0.0"
+# socket_url = "localhost"
 
 async def connect_socket(db):
 	async with websockets.connect("ws://localhost:3000") as websocket:
-		#await websocket.send("Hi server. I'm client")
-
 		while True:
 			try:
 				data_rcv = await websocket.recv()
@@ -37,60 +34,51 @@ async def connect_socket(db):
 			except websockets.exceptions.ConnectionClosedError:
 				return
 
-
 async def save_db(db, print_log=True):
-
 	while True:
-
 		if print_log:
 			for row in db.query():
 				print(row)
 			print("Saved!")
 
 		db.commit()
+		# why does it needed? await asyncio.sleep(1) do anything for this situation cause it's noas
 		await asyncio.sleep(1)
 
-
 async def accept_user(websocket, path):
-	print("connection established!")
-
-	db = DB()
-
-	try:
-		db.create_table()	# create the table if it doesn't exist
-	except:
-		pass
-
-	# connect to socket
-	socket_connection = asyncio.ensure_future(connect_socket(db))
-	savedb = asyncio.ensure_future(save_db(db))
-
 	while True:
+		msg = await websocket.recv()
+			if msg == "hello":
+		await websocket.send("welcome")
+		print("connection established!")
+		db = DB()
 		try:
-			data_rcv = await websocket.recv()
-			if "cancel" in data_rcv:
-				print("received cancel request")
+			db.create_table()	# create the table if it doesn't exist
+		except:
+			pass
+		# connect to socket
+		socket_connection = asyncio.ensure_future(connect_socket(db))
+		savedb = asyncio.ensure_future(save_db(db))
+		while True:
+			try:
+				data_rcv = await websocket.recv()
+				
+				if "cancel" in data_rcv:
+					await websocket.send("good-bye")
+					print("received cancel request")
+					break
+			except websockets.exceptions.ConnectionClosedError:
+				print("cancelled!")
 				break
-
-		except websockets.exceptions.ConnectionClosedError:
-			print("cancelled!")
-			break
-
-
-
-	socket_connection.cancel()
-	savedb.cancel()
-	db.delete_all()
-
+		socket_connection.cancel()
+		savedb.cancel()
+		await asyncio.sleep(5)
+		db.delete_all()
 
 async def main():
 	ws = asyncio.ensure_future(websockets.serve(accept_user, socket_url, 3001))
-
 	while True:
 		await asyncio.sleep(1)
 
-
 if __name__ == "__main__":
 	asyncio.get_event_loop().run_until_complete(main())
-
-
