@@ -14,12 +14,13 @@ JSON {
  }
 }
 '''
-socket_url = "0.0.0.0"
+# socket server url
+socket_url = "116.89.189.47"
 # socket_url = "localhost"
 
 async def connect_socket(db):
 	before_time = datetime.now()
-	async with websockets.connect("ws://localhost:3000") as websocket:
+	async with websockets.connect(f"ws://{socket_url}:3000") as websocket:
 		while True:
 			try:
 				data_rcv = await websocket.recv()
@@ -93,7 +94,7 @@ async def accept_user(websocket, path):
 	print("socket_connection cancelled!")
 
 async def main():
-	ws = asyncio.ensure_future(websockets.serve(accept_user, socket_url, 3001))
+	ws = asyncio.ensure_future(websockets.serve(accept_user, "0.0.0.0", 3001))
 	while True:
 		await asyncio.sleep(1)
 
