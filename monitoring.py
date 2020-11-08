@@ -40,6 +40,7 @@ def get_expreesion_duration(key):
     for query in querys[1:]:
         current_time = datetime.datetime.strptime(query[3], "%Y-%m-%d %H:%M:%S")
         duration = (current_time-before_time).total_seconds()
+        before_time = current_time
         expression = query[1]
         return_data[expression] += duration
     return json.dumps(return_data )
