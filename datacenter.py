@@ -29,7 +29,7 @@ async def connect_socket(db):
 				expression = data["expression"]
 				eye_dir = data["eye_dir"]
 
-				db.insert((key, expression, eye_dir))
+				print(db.insert(key, expression, eye_dir))
 
 			except websockets.exceptions.ConnectionClosedError:
 				return
@@ -41,7 +41,6 @@ async def save_db(db, print_log=True):
 				print(row)
 			print("Saved!")
 
-		db.commit()
 		# why does it needed? await asyncio.sleep(1) do anything for this situation cause it's noas
 		await asyncio.sleep(1)
 
@@ -82,9 +81,8 @@ async def accept_user(websocket, path):
 
 	socket_connection.cancel()
 	savedb.cancel()
-	await asyncio.sleep(5)
+	
 	db.delete_all()
-	db.commit()
 	while not socket_connection.cancelled():
 		print("@@")
 		await asyncio.sleep(1)

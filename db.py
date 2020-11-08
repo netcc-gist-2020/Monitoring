@@ -1,31 +1,31 @@
-import sqlite3 
+from influxdb import InfluxDBClient
+from datetime import datetime
 
 class DB:
 	def __init__(self):
-		self.conn = sqlite3.connect('example.db')
-		self.c = self.conn.cursor()
-
+		self.client = InfluxDBClient('localhost', 8086, 'root', 'root', 'example')
 
 	def create_table(self):
-		self.c.execute("create table record (key char(6), expression text, eye_dir text, time datetime default current_timestamp)")
-		self.conn.commit()
+		self.client.create_database('example')
 
-
-	def insert(self, record):
-		self.c.execute("insert into record (key, expression, eye_dir) values(?,?, ?)", record)
-
+	def insert(self, key, exp, eye_dir):
+		json_body = [
+			{
+				"measurement": "record",
+				"tags": {
+					"key": key,
+				},
+				# "time": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+				"fields": {
+					"expression": exp, 
+					"eye_dir": eye_dir
+				}
+			}
+		]
+		return self.client.write_points(json_body)
 
 	def query(self):
-		return self.c.execute("select * from record")
+		return self.client.query("select * from record")
 
 	def delete_all(self):
-		self.c.execute("delete from record")
-
-	def commit(self):
-		self.conn.commit()
-
-	def close(self):
-		self.conn.close()
-		
-	def __del__(self):
-		self.close()
+		self.client.query("delete from record")
