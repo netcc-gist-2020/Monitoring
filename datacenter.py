@@ -2,7 +2,7 @@ import asyncio
 import websockets
 import json
 from db import DB
-
+from datetime import datetime
 '''
 Request Form when Enter
 JSON {
@@ -18,10 +18,15 @@ socket_url = "0.0.0.0"
 # socket_url = "localhost"
 
 async def connect_socket(db):
+	before_time = datetime.now()
 	async with websockets.connect("ws://localhost:3000") as websocket:
 		while True:
 			try:
 				data_rcv = await websocket.recv()
+				curr_time = datetime.now()
+				time_delta = curr_time - before_time
+				before_time = curr_time
+				seconds = time_delta.total_seconds()
 				json_data = json.loads(data_rcv)
 				data = json_data["data"]
 
@@ -29,7 +34,7 @@ async def connect_socket(db):
 				expression = data["expression"]
 				eye_dir = data["eye_dir"]
 
-				print(db.insert(key, expression, eye_dir))
+				print(db.insert(key, expression, eye_dir, seconds))
 
 			except websockets.exceptions.ConnectionClosedError:
 				return
@@ -41,7 +46,6 @@ async def save_db(db, print_log=True):
 				print(row)
 			print("Saved!")
 
-		# why does it needed? await asyncio.sleep(1) do anything for this situation cause it's noas
 		await asyncio.sleep(1)
 
 async def accept_user(websocket, path):
@@ -82,7 +86,7 @@ async def accept_user(websocket, path):
 	socket_connection.cancel()
 	savedb.cancel()
 	
-	db.delete_all()
+	# db.delete_all()
 	while not socket_connection.cancelled():
 		print("@@")
 		await asyncio.sleep(1)

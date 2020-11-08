@@ -1,5 +1,5 @@
 from flask import Flask,g
-import sqlite3
+from db import DB
 import json
 import datetime
 
@@ -28,27 +28,27 @@ def query_db(query, args=(), one=False):
 
 @app.route('/student/<key>')
 def get_expreesion_duration(key):
+    db = DB()
     return_data = {
         'happy': 0,
         'neutral': 0,
         'sleepy': 0
     }
-    querys = query_db('select * from record where key= ?', [key])
-    before_time = datetime.datetime.strptime(querys[0][3], "%Y-%m-%d %H:%M:%S")
-    print(before_time)
+    querys = list(db.query(f"select * from record where s_id = '{key}'").get_points())
     # query = (key:char(6), expression: text, eye_dir: text, time: datatime) - tuple
-    for query in querys[1:]:
-        current_time = datetime.datetime.strptime(query[3], "%Y-%m-%d %H:%M:%S")
-        duration = (current_time-before_time).total_seconds()
-        before_time = current_time
-        expression = query[1]
+    for query in querys:
+        expression = query["expression"]
+        duration = query["duration"]
         return_data[expression] += duration
-    return json.dumps(return_data )
+    for k in return_data.keys():
+        return_data[k] = round(return_data[k],2)
+    return json.dumps(return_data)
 
 @app.route('/classroom')
 def classroom():
+    db = DB()
     # query_db return value : tuple
-    keys = [i[0] for i in query_db('select distinct key from record')]
+    keys = [q['distinct'] for q in list(db.query('select distinct(s_id) from record').get_points())]
     ret = []
     for key in keys:
         data_form = {}
@@ -59,4 +59,4 @@ def classroom():
 
 if __name__ == '__main__':
     #app.run()
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=False)
