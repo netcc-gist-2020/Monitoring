@@ -46,34 +46,45 @@ async def save_db(db, print_log=True):
 		await asyncio.sleep(1)
 
 async def accept_user(websocket, path):
+	
 	while True:
-		msg = await websocket.recv()
-			if msg == "hello":
-		await websocket.send("welcome")
-		print("connection established!")
-		db = DB()
 		try:
-			db.create_table()	# create the table if it doesn't exist
-		except:
-			pass
-		# connect to socket
-		socket_connection = asyncio.ensure_future(connect_socket(db))
-		savedb = asyncio.ensure_future(save_db(db))
-		while True:
-			try:
-				data_rcv = await websocket.recv()
-				
-				if "cancel" in data_rcv:
-					await websocket.send("good-bye")
-					print("received cancel request")
-					break
-			except websockets.exceptions.ConnectionClosedError:
-				print("cancelled!")
+			msg = await websocket.recv()
+			if msg == "hello":
+				await websocket.send("welcome")
 				break
-		socket_connection.cancel()
-		savedb.cancel()
-		await asyncio.sleep(5)
-		db.delete_all()
+		except websockets.exceptions.ConnectionClosedError:
+			return
+
+	print("connection established!")
+	db = DB()
+
+	try:
+		db.create_table()	# create the table if it doesn't exist
+	except:
+		pass
+		
+	# connect to socket
+	socket_connection = asyncio.ensure_future(connect_socket(db))
+	savedb = asyncio.ensure_future(save_db(db))
+
+	while True:
+		try:
+			data_rcv = await websocket.recv()
+				
+			if "cancel" in data_rcv:
+				await websocket.send("good-bye")
+				print("received cancel request")
+				break
+		except websockets.exceptions.ConnectionClosedError:
+			print("cancelled!")
+			break
+
+	socket_connection.cancel()
+	savedb.cancel()
+
+	await asyncio.sleep(5)
+	db.delete_all()
 
 async def main():
 	ws = asyncio.ensure_future(websockets.serve(accept_user, socket_url, 3001))
