@@ -82,9 +82,13 @@ async def accept_user(websocket, path):
 
 	socket_connection.cancel()
 	savedb.cancel()
-
 	await asyncio.sleep(5)
 	db.delete_all()
+	db.commit()
+	while not socket_connection.cancelled():
+		print("@@")
+		await asyncio.sleep(1)
+	print("socket_connection cancelled!")
 
 async def main():
 	ws = asyncio.ensure_future(websockets.serve(accept_user, socket_url, 3001))
