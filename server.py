@@ -16,7 +16,6 @@ JSON {
 
 # 
 '''
-
 async def accept(websocket, path):
 	#data_rcv = await websocket.recv()
 	while True:
