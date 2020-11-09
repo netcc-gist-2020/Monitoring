@@ -34,4 +34,4 @@ services:
     container_name: monitoring-influxdb
     restart: always
     ports:
-      - "8806:8806"
+      - "8086:8086"
