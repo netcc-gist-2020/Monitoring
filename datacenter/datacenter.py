@@ -13,6 +13,7 @@ JSON {
  }
 }
 '''
+# real socket server "116.89.189.47:8080"
 # socket server url
 socket_url = "116.89.189.47"
 # socket_url = "localhost"
