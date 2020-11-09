@@ -17,7 +17,21 @@ JSON {
 # 
 '''
 async def accept(websocket, path):
-	#data_rcv = await websocket.recv()
+	try: 
+		data_rcv = await websocket.recv()
+		json_data = json.loads(data_rcv)
+		if json_data["type"] == "open":
+			data_send = {
+					'type': "welcome",
+					'data': {
+						'key': None,
+						'keys': None,
+						'expression': None, 
+					}
+				}
+			await websocket.send(json.dumps(data_send))
+	except json.decoder.JSONDecodeError:
+		print("json decode error")
 	while True:
 		try:
 			for _ in range(1):
