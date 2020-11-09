@@ -3,22 +3,21 @@ from datetime import datetime
 
 class DB:
 	def __init__(self):
-		self.client = InfluxDBClient('localhost', 8086, 'root', 'root', 'example')
+		self.client = InfluxDBClient('monitoring-influxdb', 8086, 'root', 'root', 'example')
 
 	def create_table(self):
 		self.client.create_database('example')
 
-	def insert(self, key, exp, eye_dir, seconds):
+	def insert(self, key, exp, eye_dir):
 		json_body = [
 			{
 				"measurement": "record",
 				"tags": {
 					"host": "hostname",
 				},
-				# "time": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+				"time": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
 				"fields": {
 					"s_id": key,
-					"duration": seconds,
 					"expression": exp, 
 					"eye_dir": eye_dir,
 				}

@@ -2,7 +2,6 @@ import asyncio
 import websockets
 import json
 from db import DB
-from datetime import datetime
 '''
 Request Form when Enter
 JSON {
@@ -14,10 +13,13 @@ JSON {
  }
 }
 '''
-socket_url = "0.0.0.0"
+# real socket server "116.89.189.47:8080"
+# socket server url
+socket_url = "116.89.189.47"
 # socket_url = "localhost"
 
 async def connect_socket(db):
+<<<<<<< HEAD:datacenter.py
 	before_time = datetime.now()
 	async with websockets.connect("ws://localhost:3000") as websocket:
 		
@@ -38,22 +40,31 @@ async def connect_socket(db):
 		except websockets.exceptions.ConnectionClosedError:
 			return
 
+=======
+	print(f"ws://{socket_url}:3000")
+	async with websockets.connect(f"ws://{socket_url}:3000") as websocket:
+>>>>>>> docker:datacenter/datacenter.py
 		while True:
 			try:
 				data_rcv = await websocket.recv()
-				curr_time = datetime.now()
-				time_delta = curr_time - before_time
-				before_time = curr_time
-				seconds = time_delta.total_seconds()
+				print(data_rcv)
 				json_data = json.loads(data_rcv)
 				if json_data["type"] == "exp":
 					data = json_data["data"]
+<<<<<<< HEAD:datacenter.py
 
 					key = data["key"]
 					expression = data["expression"]
 					eye_dir = data["eye_dir"]
 
 					print(db.insert(key, expression, eye_dir, seconds))
+=======
+					key = data["key"]
+					expression = data["expression"]
+					eye_dir = data["eye_dir"]
+
+					print(db.insert(key, expression, eye_dir))
+>>>>>>> docker:datacenter/datacenter.py
 
 			except websockets.exceptions.ConnectionClosedError:
 				return
@@ -64,7 +75,6 @@ async def save_db(db, print_log=True):
 			for row in db.query():
 				print(row)
 			print("Saved!")
-
 		await asyncio.sleep(1)
 
 async def accept_user(websocket, path):
@@ -105,14 +115,14 @@ async def accept_user(websocket, path):
 	socket_connection.cancel()
 	savedb.cancel()
 	
-	# db.delete_all()
+	db.delete_all()
 	while not socket_connection.cancelled():
 		print("@@")
 		await asyncio.sleep(1)
 	print("socket_connection cancelled!")
 
 async def main():
-	ws = asyncio.ensure_future(websockets.serve(accept_user, socket_url, 3001))
+	ws = asyncio.ensure_future(websockets.serve(accept_user, "0.0.0.0", 3001))
 	while True:
 		await asyncio.sleep(1)
 
