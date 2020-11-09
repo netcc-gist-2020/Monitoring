@@ -19,10 +19,8 @@ socket_url = "116.89.189.47"
 # socket_url = "localhost"
 
 async def connect_socket(db):
-<<<<<<< HEAD:datacenter.py
 	before_time = datetime.now()
 	async with websockets.connect("ws://localhost:3000") as websocket:
-		
 		try:
 			handshake = {
 				'type': 'open',
@@ -34,16 +32,15 @@ async def connect_socket(db):
 			}
 			await websocket.send(json.dumps(handshake))
 			data_rcv = await websocket.recv()
+			print(data_rcv)
 			data_rcv = json.loads(data_rcv)
 			
 
 		except websockets.exceptions.ConnectionClosedError:
 			return
 
-=======
 	print(f"ws://{socket_url}:3000")
 	async with websockets.connect(f"ws://{socket_url}:3000") as websocket:
->>>>>>> docker:datacenter/datacenter.py
 		while True:
 			try:
 				data_rcv = await websocket.recv()
@@ -51,20 +48,17 @@ async def connect_socket(db):
 				json_data = json.loads(data_rcv)
 				if json_data["type"] == "exp":
 					data = json_data["data"]
-<<<<<<< HEAD:datacenter.py
 
 					key = data["key"]
 					expression = data["expression"]
 					eye_dir = data["eye_dir"]
 
 					print(db.insert(key, expression, eye_dir, seconds))
-=======
 					key = data["key"]
 					expression = data["expression"]
 					eye_dir = data["eye_dir"]
 
 					print(db.insert(key, expression, eye_dir))
->>>>>>> docker:datacenter/datacenter.py
 
 			except websockets.exceptions.ConnectionClosedError:
 				return
