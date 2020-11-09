@@ -20,6 +20,7 @@ socket_url = "116.89.189.56"
 
 async def connect_socket(db):
 	async with websockets.connect(f"ws://{socket_url}:8080") as websocket:
+		print("hello handshake")
 		try:
 			handshake = {
 				'type': 'open',
@@ -55,8 +56,8 @@ async def connect_socket(db):
 async def save_db(db, print_log=True):
 	while True:
 		if print_log:
-			for row in db.query():
-				print(row)
+			# for row in db.query():
+				# print(row)
 			print("Saved!")
 		await asyncio.sleep(1)
 
