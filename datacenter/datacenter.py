@@ -19,7 +19,7 @@ socket_url = "116.89.189.47"
 # socket_url = "localhost"
 
 async def connect_socket(db):
-	async with websockets.connect(f"ws://{socket_url}:3000") as websocket:
+	async with websockets.connect(f"ws://{socket_url}:8080") as websocket:
 		try:
 			handshake = {
 				'type': 'open',
