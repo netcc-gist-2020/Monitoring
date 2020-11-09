@@ -35,7 +35,7 @@ async def accept(websocket, path):
 		except websockets.exceptions.ConnectionClosedError:
 			return
 	
-websoc_svr = websockets.serve(accept, "localhost", 3000)
+websoc_svr = websockets.serve(accept, "0.0.0.0", 3000)
 
 asyncio.get_event_loop().run_until_complete(websoc_svr)
 asyncio.get_event_loop().run_forever()
