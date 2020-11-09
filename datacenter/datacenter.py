@@ -15,7 +15,7 @@ JSON {
 '''
 # real socket server "116.89.189.47:8080"
 # socket server url
-socket_url = "116.89.189.47"
+socket_url = "116.89.189.56"
 # socket_url = "localhost"
 
 async def connect_socket(db):
@@ -34,6 +34,7 @@ async def connect_socket(db):
 			print(data_rcv)
 			
 		except websockets.exceptions.ConnectionClosedError:
+			print("connect_socket error")
 			return
 
 		while True:
