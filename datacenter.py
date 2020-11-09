@@ -20,6 +20,24 @@ socket_url = "0.0.0.0"
 async def connect_socket(db):
 	before_time = datetime.now()
 	async with websockets.connect("ws://localhost:3000") as websocket:
+		
+		try:
+			handshake = {
+				'type': 'open',
+				'data': {
+					'key': None,
+					'keys': None,
+					'expression': None
+				}
+			}
+			await websocket.send(json.dumps(handshake))
+			data_rcv = await websocket.recv()
+			data_rcv = json.loads(data_rcv)
+			
+
+		except websockets.exceptions.ConnectionClosedError:
+			return
+
 		while True:
 			try:
 				data_rcv = await websocket.recv()
@@ -28,13 +46,14 @@ async def connect_socket(db):
 				before_time = curr_time
 				seconds = time_delta.total_seconds()
 				json_data = json.loads(data_rcv)
-				data = json_data["data"]
+				if json_data["type"] == "exp":
+					data = json_data["data"]
 
-				key = data["key"]
-				expression = data["expression"]
-				eye_dir = data["eye_dir"]
+					key = data["key"]
+					expression = data["expression"]
+					eye_dir = data["eye_dir"]
 
-				print(db.insert(key, expression, eye_dir, seconds))
+					print(db.insert(key, expression, eye_dir, seconds))
 
 			except websockets.exceptions.ConnectionClosedError:
 				return
