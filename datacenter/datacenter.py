@@ -86,7 +86,7 @@ async def accept_user(websocket, path):
 		
 	# connect to socket
 	socket_connection = asyncio.ensure_future(connect_socket(db))
-	savedb = asyncio.ensure_future(save_db(db))
+	savedb = asyncio.ensure_future(save_db(db,False))
 
 	while True:
 		try:
