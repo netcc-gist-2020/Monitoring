@@ -47,7 +47,7 @@ async def connect_socket(db):
 				json_data = json.loads(data_rcv)
 				if json_data["type"] == "exp":
 					data = json_data["data"]
-					if not data["key"] or not data["eye_dir"]:
+					if "expression" not in data.keys():
 						continue
 					key = data["key"]
 					expression = data["expression"]
@@ -86,7 +86,7 @@ async def accept_user(websocket, path):
 		
 	# connect to socket
 	socket_connection = asyncio.ensure_future(connect_socket(db))
-	savedb = asyncio.ensure_future(save_db(db,False))
+	savedb = asyncio.ensure_future(save_db(db, False))
 
 	while True:
 		try:
