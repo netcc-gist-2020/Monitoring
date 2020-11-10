@@ -3,7 +3,7 @@ from datetime import datetime
 
 class DB:
 	def __init__(self):
-		self.client = InfluxDBClient('monitoring-influxdb', 8086, 'root', 'root', 'example')
+		self.client = InfluxDBClient('localhost', 8086, 'root', 'root', 'example')
 
 	def create_table(self):
 		self.client.create_database('example')
