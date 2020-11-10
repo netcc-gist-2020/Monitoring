@@ -13,4 +13,11 @@ source /Monitoring/venv/bin/activate
 python /Monitoring/server.py
 ```
 
+
+```
+docker run -dit --network=host --name datacenter datacenter
+docker run -dit --network=host --name monitoring monitoring
+docker run -dit --network=host --name db influxdb
+```
+
 network communicate within itself.

@@ -55,10 +55,10 @@ async def connect_socket(db):
 
 async def save_db(db, print_log=True):
 	while True:
-		if print_log:
+		# if print_log:
 			# for row in db.query():
 				# print(row)
-			print("Saved!")
+			# print("Saved!")
 		await asyncio.sleep(1)
 
 async def accept_user(websocket, path):
