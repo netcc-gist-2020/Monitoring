@@ -14,6 +14,8 @@ services:
       - db
     depends_on: 
       - db
+    networks:
+      - net
 
   monitoring:
     container_name: monitoring
@@ -28,6 +30,8 @@ services:
       - db
     depends_on: 
       - db
+    networks:
+      - net
 
   db:
     image: influxdb:latest 
@@ -35,3 +39,10 @@ services:
     restart: always
     ports:
       - "8086:8086"
+    networks:
+      - net
+
+networks:
+  -net:
+    external: true
+
