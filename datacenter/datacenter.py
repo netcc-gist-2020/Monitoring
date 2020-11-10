@@ -51,14 +51,15 @@ async def connect_socket(db):
 					print(db.insert(key, expression, eye_dir))
 
 			except websockets.exceptions.ConnectionClosedError:
+				print("websocket. Connection Closed Error")
 				return
 
 async def save_db(db, print_log=True):
 	while True:
-		# if print_log:
-			# for row in db.query():
-				# print(row)
-			# print("Saved!")
+		if print_log:
+			for row in db.query():
+				print(row)
+			print("Saved!")
 		await asyncio.sleep(1)
 
 async def accept_user(websocket, path):
@@ -82,7 +83,7 @@ async def accept_user(websocket, path):
 		
 	# connect to socket
 	socket_connection = asyncio.ensure_future(connect_socket(db))
-	savedb = asyncio.ensure_future(save_db(db))
+	savedb = asyncio.ensure_future(save_db(db,False))
 
 	while True:
 		try:
