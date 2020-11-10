@@ -10,6 +10,8 @@ JSON {
    'key': null
    'keys': null
    'expression': null
+   'absence':
+   'isSpy':
  }
 }
 '''
@@ -45,13 +47,14 @@ async def connect_socket(db):
 				json_data = json.loads(data_rcv)
 				if json_data["type"] == "exp":
 					data = json_data["data"]
+					if not data["key"] or not data["eye_dir"]:
+						continue
 					key = data["key"]
 					expression = data["expression"]
 					eye_dir = data["eye_dir"]
 					print(db.insert(key, expression, eye_dir))
 
 			except websockets.exceptions.ConnectionClosedError:
-				print("websocket. Connection Closed Error")
 				return
 
 async def save_db(db, print_log=True):
@@ -83,7 +86,7 @@ async def accept_user(websocket, path):
 		
 	# connect to socket
 	socket_connection = asyncio.ensure_future(connect_socket(db))
-	savedb = asyncio.ensure_future(save_db(db,False))
+	savedb = asyncio.ensure_future(save_db(db))
 
 	while True:
 		try:
