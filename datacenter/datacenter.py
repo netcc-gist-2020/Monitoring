@@ -51,6 +51,8 @@ async def connect_socket(db):
 						continue
 					key = data["key"]
 					expression = data["expression"]
+					if expression == "neutral" and data["sleepiness"] == "sleepy":
+						expression = "sleepy"
 					eye_dir = data["eye_dir"]
 					print(db.insert(key, expression, eye_dir))
 
