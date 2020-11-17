@@ -51,12 +51,11 @@ async def connect_socket(db):
 						continue
 					key = data["key"]
 					expression = data["expression"]
-					if expression == "neutral" and data["sleepiness"] == "sleepy":
-						expression = "sleepy"
 					eye_dir = data["eye_dir"]
 					print(db.insert(key, expression, eye_dir))
 
 			except websockets.exceptions.ConnectionClosedError:
+				print("ConnectionCLosedError")
 				return
 
 async def save_db(db, print_log=True):
@@ -72,6 +71,7 @@ async def accept_user(websocket, path):
 	while True:
 		try:
 			msg = await websocket.recv()
+			print(msg)
 			if msg == "hello":
 				await websocket.send("welcome")
 				break
